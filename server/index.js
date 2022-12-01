@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const blogModel = require("./blog.model");
 express = require("express");
 const cors = require("cors");
-
+let nodemailer = require("nodemailer");
 port = 8080;
 app = express();
 app.use(cors());
@@ -15,17 +15,15 @@ app.post("/login", async (req, res) => {
     user = await UserModel.findOne(req.body);
 
     if (user) {
-      console.log("done");
-      let token = jwt.sign({ user }, "1234");
-      res.send({ token: token });
-    } else {
-      res.send("login fail");
+      console.log("done 1");
+      let token = jwt.sign({ user }, "1234", {
+        expiresIn: "1 min",
+      });
+      return res.send({ token: token });
     }
   } catch (err) {
     console.log(err);
   }
-
-  res.send("hi");
 });
 
 app.post("/signup", async (req, res) => {
@@ -41,19 +39,53 @@ app.post("/signup", async (req, res) => {
 app.post("/blogpost", async (req, res) => {
   try {
     blog = await blogModel.create(req.body);
-    res.send("blog posted")
-    console.log(blog)
+    res.send("blog posted");
+    console.log(blog);
   } catch (err) {
     console.log(err);
   }
 });
 
-
 app.get("/blogpost", async (req, res) => {
+  // let token = req.body.data.token;
+
+  // let jwttok = jwt.verify(token, "1234");
+
+  // if (jwttok) {
+    try {
+      blog = await blogModel.find();
+      return res.send(blog);
+      // console.log(blog);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  // res.send("not verified");
+);
+
+app.post("/forgotpass", async (req, res) => {
   try {
-    blog = await blogModel.find();
-    res.send(blog)
-    console.log(blog)
+    let user = await UserModel.findOne(req.body);
+    if (user) {
+      let otp = Math.ceil(Math.random() * 10000);
+      console.log("verified");
+      let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        auth: {
+          user: "lawson.marks86@ethereal.email",
+          pass: "3FqDkj31zyZxFQ1TVr",
+        },
+      });
+      transporter.sendMail({
+        from: "Onk7744@gmail.com",
+        to: "	lawson.marks86@ethereal.email",
+        subject: "Sending OTP",
+        text: `${otp}`,
+      });
+
+      res.send({ otp: otp });
+    }
   } catch (err) {
     console.log(err);
   }

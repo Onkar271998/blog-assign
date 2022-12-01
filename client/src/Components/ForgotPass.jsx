@@ -6,36 +6,35 @@ import {
   Input,
   Checkbox,
   Stack,
+  Link,
   Button,
   Heading,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React from "react";
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
+function ForgotPass() {
   const [data, setData] = useState({});
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const handleChange = (e) => {
     let { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
   const handleSubmit = async () => {
+    console.log(data);
+
     let logindata = await axios
-      .post("http://localhost:8080/login", data)
-      .then(
-        (res) => localStorage.setItem("token", res.data.token),
-       
-        navigate("/")
-        
-      );
-
-
-    console.log(data)
+      .post("http://localhost:8080/forgotPass", data)
+      .then((res) => {
+        localStorage.setItem("otp", res.data.otp);
+        navigate("/otp");
+      })
+      .catch((err) => console.log(err));
   };
+
   return (
     <Flex
       minH={"100vh"}
@@ -43,11 +42,12 @@ function Login() {
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6} w="30%">
         <Stack align={"center"}>
-          <Heading fontSize={"4xl"}>Sign in to your account</Heading>
+          <Heading fontSize={"4xl"}>Forgot password</Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool <Link color={"blue.400"}>features</Link> ✌️
+            you can enter email below or{" "}
+            <Link color={"blue.400"}>Signup again</Link> ✌️
           </Text>
         </Stack>
         <Box
@@ -61,21 +61,14 @@ function Login() {
               <FormLabel>Email address</FormLabel>
               <Input type="email" name="email" onChange={handleChange} />
             </FormControl>
-            <FormControl id="password">
-              <FormLabel>Password</FormLabel>
-              <Input type="password" name="password" onChange={handleChange} />
-            </FormControl>
+
             <Stack spacing={10}>
               <Stack
                 direction={{ base: "column", sm: "row" }}
                 align={"start"}
                 justify={"space-between"}
               >
-                <Checkbox>Remember me</Checkbox>
-                <Link color={"blue.400"} to="/forgotpass">
-                  {" "}
-                  <Text textDecoration="underline">Forgot password?</Text>
-                </Link>
+                <Checkbox>Terms and condition</Checkbox>
               </Stack>
               <Button
                 bg={"blue.400"}
@@ -85,7 +78,7 @@ function Login() {
                 }}
                 onClick={handleSubmit}
               >
-                Sign in
+                Sent OTP
               </Button>
             </Stack>
           </Stack>
@@ -94,5 +87,4 @@ function Login() {
     </Flex>
   );
 }
-
-export default Login;
+export default ForgotPass;
