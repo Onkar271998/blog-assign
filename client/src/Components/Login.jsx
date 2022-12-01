@@ -10,6 +10,7 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React from "react";
@@ -19,22 +20,42 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 function Login() {
   const [data, setData] = useState({});
   let navigate = useNavigate();
+  const toast = useToast();
   const handleChange = (e) => {
     let { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
   const handleSubmit = async () => {
-    let logindata = await axios
-      .post("http://localhost:8080/login", data)
-      .then(
-        (res) => localStorage.setItem("token", res.data.token),
-       
-        navigate("/")
-        
-      );
+    try {
+      let logindata = await axios.post("http://localhost:8080/login", data);
+      if (logindata) {
+        navigate("/");
+      
+      }
+    } catch (err) {
+      console.log(err);
+      toast({
+        title: "Error Occurred !",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
 
+    // .then(
+    //       (res) => localStorage.setItem("token", res.data.token)
 
-    console.log(data)
+    //       // navigate("/")
+    //     );
+    //     if (logindata) {
+    //       navigate("/")
+    //     }
+    //     else{
+    //       console.log("pass incorrect");
+    //     }
+
+    //     console.log(data);
   };
   return (
     <Flex

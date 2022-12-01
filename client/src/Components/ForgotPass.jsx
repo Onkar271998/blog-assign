@@ -11,6 +11,7 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useState } from "react";
@@ -19,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 function ForgotPass() {
   const [data, setData] = useState({});
   const navigate = useNavigate();
+  const toast = useToast();
   const handleChange = (e) => {
     let { name, value } = e.target;
     setData({ ...data, [name]: value });
@@ -32,7 +34,13 @@ function ForgotPass() {
         localStorage.setItem("otp", res.data.otp);
         navigate("/otp");
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>  toast({
+        title: "Error Occurred !",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      }));
   };
 
   return (

@@ -20,7 +20,9 @@ app.post("/login", async (req, res) => {
         expiresIn: "1 min",
       });
       return res.send({ token: token });
-    }
+    }else[
+      console.log("err")
+    ]
   } catch (err) {
     console.log(err);
   }
@@ -40,14 +42,15 @@ app.post("/blogpost", async (req, res) => {
   try {
     blog = await blogModel.create(req.body);
     res.send("blog posted");
-    console.log(blog);
+    // console.log(blog);
   } catch (err) {
     console.log(err);
   }
 });
 
 app.get("/blogpost", async (req, res) => {
-  // let token = req.body.data.token;
+  let token = req.body
+  // console.log(token)
 
   // let jwttok = jwt.verify(token, "1234");
 
@@ -91,8 +94,19 @@ app.post("/forgotpass", async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("hi");
+
+
+app.post("/changepass",async (req, res) => {
+
+  console.log(req.body.email)
+  try {
+    user = await UserModel.updateOne({email: req.body.email},{$set:{password:req.body.password}});
+    console.log("password updated")
+  } catch (err) {
+    console.log(err);
+  }
+
+  
 });
 
 mongoose.connect("mongodb://127.0.0.1:27017/b21").then(() => {
