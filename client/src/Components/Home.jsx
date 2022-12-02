@@ -29,23 +29,22 @@ function Home() {
   };
 
   const handleClick = async () => {
-    let blogdata = await axios.post("http://localhost:8080/blogpost", data );
+    let blogdata = await axios.post("http://localhost:8080/blogpost", data);
     console.log(data);
   };
 
   const getblogs = async () => {
     try {
       let token = localStorage.getItem("token");
-      console.log(token)
-      const blogs = await axios.get("http://localhost:8080/blogpost")
-        // data: { token: token },
-        
-      // });
+      console.log(token);
+      const blogs = await axios.post("http://localhost:8080/blogpost1", {
+        data: { token: token },
+      });
       console.log(blogs);
       setBlog(blogs.data);
     } catch (err) {
       console.log(err);
-      // navigate("/login");
+      navigate("/login");
     }
   };
 

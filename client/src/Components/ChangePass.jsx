@@ -13,6 +13,7 @@ import {
   Text,
   useColorModeValue,
   Link,
+  useToast
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -22,7 +23,7 @@ function ChangePass() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [data, setData] = useState({});
-
+  const toast = useToast();
   const handleChange = (e) => {
     let { name, value } = e.target;
 
@@ -30,7 +31,26 @@ function ChangePass() {
   };
   const handleSubmit = async () => {
     console.log(data);
-    let logindata = await axios.post("http://localhost:8080/changepass", data);
+    try{
+      let logindata = await axios.post("http://localhost:8080/changepass", data);
+      toast({
+        title: "password change !",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+    }catch(err){
+      toast({
+        title: "Error Occurred !",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  
   };
 
   return (

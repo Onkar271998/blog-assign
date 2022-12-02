@@ -20,9 +20,7 @@ app.post("/login", async (req, res) => {
         expiresIn: "1 min",
       });
       return res.send({ token: token });
-    }else[
-      console.log("err")
-    ]
+    } else [console.log("err")];
   } catch (err) {
     console.log(err);
   }
@@ -48,23 +46,22 @@ app.post("/blogpost", async (req, res) => {
   }
 });
 
-app.get("/blogpost", async (req, res) => {
-  let token = req.body
-  // console.log(token)
-
-  // let jwttok = jwt.verify(token, "1234");
-
-  // if (jwttok) {
-    try {
+app.post("/blogpost1", async (req, res) => {
+  let token = req.body.data.token;
+  console.log(token);
+  try {
+    let jwttok = jwt.verify(token, "1234");
+    if (jwttok) {
       blog = await blogModel.find();
       return res.send(blog);
-      // console.log(blog);
-    } catch (err) {
-      console.log(err);
     }
+    return res.send("Token is expired");
+  } catch (err) {
+    console.log(err);
   }
-  // res.send("not verified");
-);
+
+  res.send("not verified");
+});
 
 app.post("/forgotpass", async (req, res) => {
   try {
@@ -94,19 +91,23 @@ app.post("/forgotpass", async (req, res) => {
   }
 });
 
-
-
-app.post("/changepass",async (req, res) => {
-
-  console.log(req.body.email)
-  try {
-    user = await UserModel.updateOne({email: req.body.email},{$set:{password:req.body.password}});
-    console.log("password updated")
+app.post("/changepass", async (req, res) => {
+  console.log(req.body.email);
+  try {  
+    let filter = { "email": req.body.email };
+    let update = { "password": req.body.password };
+    user = await UserModel.findOneAndUpdate(filter,update);
+    // user = await UserModel.updateOne(
+    //   { email: req.body.email },
+    //   { $set: { password: req.body.password } }
+    // );
+    console.log("password updated"); 
   } catch (err) {
     console.log(err);
   }
-
-  
+});
+app.get("/", async (req, res) => {
+  res.send("hi");
 });
 
 mongoose.connect("mongodb://127.0.0.1:27017/b21").then(() => {

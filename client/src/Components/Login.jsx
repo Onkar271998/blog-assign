@@ -27,35 +27,21 @@ function Login() {
   };
   const handleSubmit = async () => {
     try {
-      let logindata = await axios.post("http://localhost:8080/login", data);
-      if (logindata) {
-        navigate("/");
-      
-      }
+      let res = await axios.post("http://localhost:8080/login", data);
+       localStorage.setItem("token",res.data.token)
+      // console.log(res.data.token);
+
+      navigate("/");
     } catch (err) {
       console.log(err);
       toast({
         title: "Error Occurred !",
         status: "error",
-        duration: 5000,
+        duration: 1000,
         isClosable: true,
         position: "bottom",
       });
     }
-
-    // .then(
-    //       (res) => localStorage.setItem("token", res.data.token)
-
-    //       // navigate("/")
-    //     );
-    //     if (logindata) {
-    //       navigate("/")
-    //     }
-    //     else{
-    //       console.log("pass incorrect");
-    //     }
-
-    //     console.log(data);
   };
   return (
     <Flex
